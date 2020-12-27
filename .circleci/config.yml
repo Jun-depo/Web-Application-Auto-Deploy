@@ -4,32 +4,39 @@ commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
-      # Add parameter here
+      bucket_name:
+        default: ${WorkflowID}
+        type: string
     steps:
       - run:
           name: Destroy environments
           when: on_fail
           command: |
             # Your code here
+            aws cloudformation delete-stack ${WorkflowID}
+            echo "Destroy back-end and front-end stacks as stacks did not build correctly"
             exit 1
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
-      # Add parameter here
+      url:
+        type: string
+        default:
     steps:
       - run:
           name: Revert migrations
           # Add when this will run
           command: |
-            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = 1
+            if curl -s --head "https://google.com")
             if(( $SUCCESS==1 )); 
             then
-            #  cd ~/project/backend
-            #  npm install
+              cd ~/project/backend
+              npm install
+            else
             #  Add revert code here. You can find this in the Getting Started section.
-              exit 1
+              npm run migrations:revert
+              # exit 1
             fi
 
 jobs:
@@ -44,7 +51,9 @@ jobs:
           name: Build front-end
           command: |
             # Your code here
-            exit 1
+            cd ~/Web-Application-Auto-Deploy/frontend
+            npm install
+            npm run build
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -60,26 +69,42 @@ jobs:
           name: Back-end build
           command: |
             # Your code here
-            exit 1
+            cd ~/Web-Application-Auto-Deploy/backend
+            npm install
+            npm run build
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
 
   test-frontend:
     docker:
-      # Docker image here
+      - image: circleci/node:13.8.0
     steps:
-      # Checkout code from git
-      # Restore from cache
-      # Your job code here
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: Test frontend-build
+          command: |
+            cd frontend
+            npm install
+            npm build
+            npm run test
 
   test-backend:
     docker:
-      # Docker image here
+      - image: circleci/node:13.8.0
     steps:
-      # Checkout code from git
-      # Restore from cache
-      # Your job code here
+      - checkout
+      - restore_cache:
+          keys: [backtend-build]
+      - run:
+          name: Test backend-build
+          command: |
+            cd backend
+            npm install
+            npm build
+            npm run test
 
   scan-frontend:
     docker:
