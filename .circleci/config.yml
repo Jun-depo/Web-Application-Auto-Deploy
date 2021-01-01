@@ -230,7 +230,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          root: ~/
+          at: ~/
       - run:
           name: Get api_url
           command: |
