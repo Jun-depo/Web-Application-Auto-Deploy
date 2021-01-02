@@ -117,7 +117,6 @@ jobs:
       - checkout
       - restore_cache:
           keys: [backend-build]
-      # npm audit fix --audit-level=critical --force
       - run:
           name: Scan audit backend
           command: |
@@ -129,6 +128,10 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - run:
+          name: install tar gzip
+          commands: |
+            yum -y update && install tar gzip -y
       - run:
           name: Ensure back-end infrastructure exists
           command: |
