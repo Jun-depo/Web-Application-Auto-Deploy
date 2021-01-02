@@ -44,7 +44,7 @@ jobs:
       - run:
           name: Build front-end
           command: |
-            cd ~/Web-Application-Auto-Deploy/frontend
+            cd frontend
             npm install
             npm run build
       - save_cache:
@@ -61,7 +61,7 @@ jobs:
       - run:
           name: Back-end build
           command: |
-            cd ~/Web-Application-Auto-Deploy/backend
+            cd backend
             npm install
             npm run build
       - save_cache:
@@ -78,7 +78,7 @@ jobs:
       - run:
           name: Test frontend-build
           command: |
-            cd ~/Web-Application-Auto-Deploy/frontend
+            cd frontend
             npm run test
 
   test-backend:
@@ -91,7 +91,7 @@ jobs:
       - run:
           name: Test backend-build
           command: |
-            cd ~/Web-Application-Auto-Deploy/backend          
+            cd backend          
             npm run test
 
   scan-frontend:
@@ -105,7 +105,7 @@ jobs:
       - run:
           name: Scan audit frontend
           command: |
-            cd ~/Web-Application-Auto-Deploy/frontend
+            cd frontend
             npm audit --audit-level=critical
 
   scan-backend:
@@ -119,7 +119,7 @@ jobs:
       - run:
           name: Scan audit backend
           command: |
-            cd ~/Web-Application-Auto-Deploy/backend
+            cd backend
             npm audit --audit-level=critical
 
   deploy-infrastructure:
