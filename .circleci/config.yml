@@ -130,7 +130,7 @@ jobs:
       - checkout
       - run:
           name: Installing dependencies
-          commands: |
+          command: |
             yum -y install tar gzip
       - run:
           name: Ensure back-end infrastructure exists
