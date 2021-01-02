@@ -180,6 +180,10 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
+            apt -y install tar gzip
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - run:
           name: Configure server
           command: |
@@ -190,7 +194,7 @@ jobs:
             BACKEND_IP=$(cat .circleci/ansible/inventory.txt | tail -1)
             echo $BACKEND_IP
             export API_URL="http://${BACKEND_IP}:3030"
-            echo $API_URL > ~/api_url.txt
+            echo $API_URL > api_url.txt
       - persist_to_workspace:
           root: .
           paths:
