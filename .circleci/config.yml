@@ -215,7 +215,7 @@ jobs:
             npm install
             npm run build
             npm run migrations
-            echo "good" > migration.txt
+            echo "migration has been executed successfully" > migration.txt
       - persist_to_workspace:
           root: .
           paths:
@@ -224,7 +224,7 @@ jobs:
           name: Send migration results to memstash
           command: |
             OUTPUT=$(cat migration.txt)
-            if (( $OUTPUT=="good"))
+            if (($OUTPUT=="migration has been executed successfully"))
             then
               curl -H "Content-Type: text/plain" -H "token: c4893bca-128d-471f-b395-90d096b5f429" --request PUT --data "good" https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7}-migration
               echo "good migration"
