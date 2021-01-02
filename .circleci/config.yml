@@ -12,8 +12,8 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name "udapeople-backend-${WorkflowID}"
-            aws cloudformation delete-stack --stack-name "udapeople-frontend-${WorkflowID}"
+            aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
+            aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
             echo "Destroy back-end and front-end stacks as stacks did not build correctly"
             exit 1
 
@@ -162,7 +162,7 @@ jobs:
             echo -ne ".us-west-2.compute.amazonaws.com" >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
       - persist_to_workspace:
-          root: ~/
+          root: .
           paths:
             - .circleci/ansible/inventory.txt
       - destroy-environment
@@ -175,7 +175,7 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["71:3c:62:1f:3c:5b:e7:da:d5:cd:e1:fe:33:d3:6f:0b"]
       - attach_workspace:
-          at: ~/
+          at: .
       - run:
           name: Install dependencies
           command: |
@@ -192,9 +192,9 @@ jobs:
             export API_URL="http://${BACKEND_IP}:3030"
             echo $API_URL > ~/api_url.txt
       - persist_to_workspace:
-          root: ~/
+          root: .
           paths:
-            - backend_url.txt
+            - api_url.txt
       - destroy-environment
 
   run-migrations:
@@ -205,7 +205,7 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["71:3c:62:1f:3c:5b:e7:da:d5:cd:e1:fe:33:d3:6f:0b"]
       - persist_to_workspace:
-          root: ~/
+          root: .
           paths:
             - migration.txt
       - run:
@@ -215,11 +215,11 @@ jobs:
             npm install
             npm run build
             npm run migrations
-            echo "good" > ~/migration.txt
+            echo "good" > migration.txt
       - run:
           name: Send migration results to memstash
           command: |
-            OUTPUT=$(cat ~/migration.txt)
+            OUTPUT=$(cat migration.txt)
             if (( $OUTPUT=="good"))
             then
               curl -H "Content-Type: text/plain" -H "token: c4893bca-128d-471f-b395-90d096b5f429" --request PUT --data "good" https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7}-migration
@@ -235,11 +235,11 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/
+          at: .
       - run:
           name: Get api_url
           command: |
-            API_URL=$(cat ~/api_url.txt )
+            API_URL=$(cat api_url.txt )
             echo API_URL: $API_URL
       - run:
           name: Deploy frontend objects
@@ -259,7 +259,7 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["71:3c:62:1f:3c:5b:e7:da:d5:cd:e1:fe:33:d3:6f:0b"]
       - attach_workspace:
-          at: ~/
+          at: .
       - run:
           name: Install dependencies
           command: |
@@ -280,11 +280,11 @@ jobs:
           command: |
             apk add --update curl
       - attach_workspace:
-          at: ~/
+          at: .
       - run:
           name: Get backend url
           command: |
-            export BACKEND-URL= $(cat ~/backend_url.txt)
+            export BACKEND-URL= $(cat api_url.txt)
       - run:
           name: Backend smoke test.
           command: |
@@ -334,7 +334,7 @@ jobs:
             --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
             --tags project=udapeople
       - persist_to_workspace:
-          root: ~/
+          root: .
           paths:
             - OldWorkID.txt
       - destroy-environment
