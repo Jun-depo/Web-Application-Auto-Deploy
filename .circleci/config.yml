@@ -94,7 +94,7 @@ jobs:
           name: Test backend-build
           command: |
             cd backend 
-            npm run ./node_modules/.bin/jest --init         
+            npm run jest --init         
             npm run test
 
   scan-frontend:
@@ -123,7 +123,7 @@ jobs:
           name: Scan audit backend
           command: |
             cd backend
-            npm audit --audit-level=critical
+            npm audit fix --audit-level=critical --force
 
   deploy-infrastructure:
     docker:
