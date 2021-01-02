@@ -129,9 +129,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: install tar gzip
+          name: Installing dependencies
           commands: |
-            yum -y update && install tar gzip -y
+            yum -y install tar gzip
       - run:
           name: Ensure back-end infrastructure exists
           command: |
