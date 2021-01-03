@@ -18,14 +18,14 @@ commands:
             exit 1
 
   revert-migrations:
-    description: Revert the last migration if successfully run in the current workflow.
+    description: Revert the last migration if successfully run in the current workflow. But fail on other test
     steps:
       - run:
           name: Revert migrations
           command: |
             export RESULT=$(curl -H "token: c4893bca-128d-471f-b395-90d096b5f429" --request GET https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7}-migration)
             echo $RESULT
-            if(( $RESULT=="bad")); 
+            if(( $RESULT==1)); 
             then
               cd ~/project/backend
               npm install
@@ -159,7 +159,6 @@ jobs:
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> .circleci/ansible/inventory.txt
-            echo -n ".us-west-2.compute.amazonaws.com" >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: .
@@ -193,7 +192,7 @@ jobs:
           command: |
             BACKEND_IP=$(cat .circleci/ansible/inventory.txt | tail -1)
             echo $BACKEND_IP
-            export API_URL="http://${BACKEND_IP}:3030"
+            export API_URL="http://${BACKEND_IP}.us-west-2.compute.amazonaws.com:3030"
             echo $API_URL > api_url.txt
       - persist_to_workspace:
           root: .
@@ -230,13 +229,25 @@ jobs:
           command: |
             if grep "has been executed successfully" ~/migration.txt
             then
-              curl -H "Content-Type: text/plain" -H "token: c4893bca-128d-471f-b395-90d096b5f429" --request PUT --data "good" https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7}-migration
+              curl -H "Content-Type: text/plain" -H "token: c4893bca-128d-471f-b395-90d096b5f429" --request PUT --data "1" https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7}-migration
               echo "good migration"
             else
-              curl -H "Content-Type: text/plain" -H "token: c4893bca-128d-471f-b395-90d096b5f429" --request PUT --data "bad" https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7}-migration
+              curl -H "Content-Type: text/plain" -H "token: c4893bca-128d-471f-b395-90d096b5f429" --request PUT --data "0" https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7}-migration
               echo "bad migration"
             fi
-      - revert-migrations
+      - run:
+          name: Revert failed migration
+          command: |
+            export RESULT=$(curl -H "token: c4893bca-128d-471f-b395-90d096b5f429" --request GET https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7}-migration)
+            echo $RESULT
+            if(( $RESULT==0)); 
+            then
+              cd ~/project/backend
+              npm install
+              npm audit fix --audit-level=critical --force
+              npm run migrations:revert
+              exit 1
+            fi
 
   deploy-frontend:
     docker:
