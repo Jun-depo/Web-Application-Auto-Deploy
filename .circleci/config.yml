@@ -124,6 +124,8 @@ jobs:
             cd backend
             npm audit fix --audit-level=critical --force
 
+  # yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+  #             yum -y install jq
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
@@ -133,8 +135,7 @@ jobs:
           name: Installing dependencies
           command: |
             yum -y install tar gzip
-            yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-            yum -y install jq
+
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -157,7 +158,7 @@ jobs:
           command: |
             echo "[web]" > .circleci/ansible/inventory.txt
             aws ec2 describe-instances  \
-              --query 'Reservations[].Instances[].{ip: PublicIpAddress, tm: LaunchTime}' \
+              --query 'Reservations[*].Instances[*].{ip: PublicIpAddress, tm: LaunchTime}' \
               jq 'sort_by(.tm) | reverse | .[0] | .ip'
               --output text >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
