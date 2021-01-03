@@ -1,9 +1,9 @@
 ## Deployment playbook goes here.
 ---
-- name: Copy index test page
+- name: Copy backend files
   template:
-    src: "~/Web-Application-Auto-Deploy/backend"
-    dest: "~/"
+    src: "/home/circleci/project/backend"
+    dest: "~/backend"
 
 # command: /usr/local/bin/pm2 start npm --name backend -- start
 

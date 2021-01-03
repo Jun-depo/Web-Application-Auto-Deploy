@@ -22,6 +22,7 @@ commands:
     steps:
       - run:
           name: Revert migrations
+          when: on_fail
           command: |
             export RESULT=$(curl -H "token: c4893bca-128d-471f-b395-90d096b5f429" --request GET https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7}-migration)
             echo $RESULT
@@ -140,8 +141,7 @@ jobs:
               --tags project=udapeople \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
-              echo "backend stack ID"
-              echo $ID
+            echo "${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -150,14 +150,13 @@ jobs:
               --tags project=uda-people \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
-              echo "frontend stack ID:"
-              echo $ID
       - run:
           name: Add back-end ip to ansible inventory
           command: |
             echo "[web]" > .circleci/ansible/inventory.txt
-            aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            aws ec2 describe-instances  \
+              --query 'Reservations[].Instances[].{ip: PublicIpAddress, tm: LaunchTime}' \
+              jq 'sort_by(.tm) | reverse | .[0]["ip"]'
               --output text >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
       - persist_to_workspace:
@@ -254,6 +253,10 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - run:
+          name: Installing dependencies
+          command: |
+            yum -y install tar gzip
       - attach_workspace:
           at: .
       - run:
