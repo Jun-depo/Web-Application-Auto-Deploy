@@ -135,9 +135,6 @@ jobs:
           name: Installing dependencies
           command: |
             yum -y install tar gzip
-            yum -y install epel-release
-            yum -y install npm
-            npm install less
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -160,8 +157,8 @@ jobs:
           command: |
             echo "[web]" > .circleci/ansible/inventory.txt
             aws ec2 describe-instances  \
-              --filters Name=instance-state-name,Values=running
-              --query 'Reservations[*].Instances[*].PublicIpAddress'
+              --filters Name=instance-state-name,Values=running \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
       - persist_to_workspace:
