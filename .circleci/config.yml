@@ -222,6 +222,8 @@ jobs:
           root: .
           paths:
             - .
+      - attach_workspace:
+          at: .
       - run:
           name: Send migration results to memstash
           command: |
