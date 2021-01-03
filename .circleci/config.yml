@@ -135,6 +135,7 @@ jobs:
           name: Installing dependencies
           command: |
             yum -y install tar gzip
+            npm install
             npm install less
       - run:
           name: Ensure back-end infrastructure exists
