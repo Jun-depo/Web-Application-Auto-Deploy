@@ -156,7 +156,7 @@ jobs:
             echo "[web]" > .circleci/ansible/inventory.txt
             aws ec2 describe-instances  \
               --query 'Reservations[].Instances[].{ip: PublicIpAddress, tm: LaunchTime}' \
-              jq 'sort_by(.tm) | reverse | .[0]["ip"]'
+              jq 'sort_by(.tm) | reverse | .[0] | .ip'
               --output text >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
       - persist_to_workspace:
