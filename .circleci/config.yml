@@ -157,7 +157,8 @@ jobs:
           command: |
             echo "[web]" > .circleci/ansible/inventory.txt
             aws ec2 describe-instances  \
-              --query 'Reservations[*].Instances[*].{ip: PublicIpAddress, tm: LaunchTime} | jq sort_by("tm") | .[-1].ip'
+              --filters Name=instance-state-name,Values=running
+              --query 'Reservations[*].Instances[*].PublicIpAddress'
               --output text >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
       - persist_to_workspace:
