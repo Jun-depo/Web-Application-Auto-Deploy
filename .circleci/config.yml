@@ -135,6 +135,7 @@ jobs:
           name: Installing dependencies
           command: |
             yum -y install tar gzip
+            yum -y install epel-release
             yum -y install npm
             npm install less
       - run:
