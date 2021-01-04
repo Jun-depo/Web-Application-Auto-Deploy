@@ -155,7 +155,7 @@ jobs:
           command: |
             echo "[web]" > .circleci/ansible/inventory.txt
             aws ec2 describe-instances  \
-              --filters Name=instance-state-name,Values=running \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text > .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
@@ -191,7 +191,7 @@ jobs:
           command: |
             BACKEND_IP=$(cat .circleci/ansible/inventory.txt | tail -1)
             echo $BACKEND_IP
-            export API_URL="http://${BACKEND_IP}.us-west-2.compute.amazonaws.com:3030"
+            export API_URL="http://${BACKEND_IP}:3030"
             echo $API_URL
             echo $API_URL > api_url.txt
       - persist_to_workspace:
@@ -251,24 +251,33 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: amazon/aws-cli
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - run:
           name: Installing dependencies
           command: |
-            yum -y install tar gzip
+            apk add --update tar gzip nodejs npm bash
+            pip install awscli
       - attach_workspace:
           at: .
       - run:
           name: Get api_url
           command: |
             API_URL=$(cat api_url.txt )
-            echo API_URL: $API_URL
+            echo "API_URL=$API_URL" >> frontend/.env
+            echo $API_URL
+      - run:
+          name: rebuild build frontend
+          command: |
+            cd frontend
+            npm install
+            npm audit fix --audit-level=critical --force
+            npm run build
       - run:
           name: "copy website files to new version S3 bucket"
           command: |
-            aws s3 sync /root/project/backend/dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --delete
+            aws s3 sync ./frontend/dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --delete
       - destroy-environment
 
   deploy-backend:
@@ -283,7 +292,8 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible
+            apk add --update ansible tar gzip nodejs npm
+            pip install awscli
       - run:
           name: Deploy backend
           command: |
