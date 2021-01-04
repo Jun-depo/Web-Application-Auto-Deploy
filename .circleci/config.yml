@@ -221,17 +221,13 @@ jobs:
             npm audit fix
             npm run migrations
             echo "migration has been executed successfully" > /tmp/workspace/migration.txt
-            ls
-            cp package.json /tmp/workspace/
-            cp package-lock.json /tmp/workspace/
-            tar -zcvf /tmp/workspace/backend.tar.gz ./dist/
+            tar -zcvf /tmp/workspace/backend.tar.gz ./backend/
+            ls /tmp/workspace/
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
             - migration.txt
             - backend.tar.gz
-            - package-lock.json
-            - package.json
       - attach_workspace:
           at: /tmp/workspace/
       - run:
