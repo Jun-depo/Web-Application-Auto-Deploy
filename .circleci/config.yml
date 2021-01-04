@@ -193,12 +193,12 @@ jobs:
           name: Get backend URL
           command: |
             BACKEND_IP=$(cat .circleci/ansible/inventory.txt | tail -1)
-            echo $BACKEND_IP > /home/circleci/project/backend_ip.txt
+            echo $BACKEND_IP > ~/backend_ip.txt
             export API_URL="http://${BACKEND_IP}:3030"
             echo $API_URL
-            echo $API_URL > /home/circleci/project/api_url.txt
+            echo $API_URL > ~/api_url.txt
       - persist_to_workspace:
-          root: /home/circleci/project/
+          root: ~/
           paths:
             - api_url.txt
             - backend_ip.txt
@@ -214,25 +214,27 @@ jobs:
       - run:
           name: Run migrations
           command: |
+            mkdir tmp
             cd backend 
             npm i -f
             npm run build
             npm audit fix
             npm run migrations
-            echo "migration has been executed successfully" > /home/circleci/project/migration.txt
+            echo "migration has been executed successfully" > /tmp/migration.txt
             pwd
             ls dist
+            tar backend.tar.gz .
       - persist_to_workspace:
-          root: /home/circleci/project/
+          root: /tmp/
           paths:
             - migration.txt
-            - backend
+            - backend.tar.gz
       - attach_workspace:
-          at: /home/circleci/project/
+          at: /tmp/
       - run:
           name: Send migration results to memstash
           command: |
-            if grep "has been executed successfully" /home/circleci/project/migration.txt
+            if grep "has been executed successfully" /tmp/migration.txt
             echo "found executed successfully in migration.txt" 
             then
               curl -H "Content-Type: text/plain" -H "token: c4893bca-128d-471f-b395-90d096b5f429" --request PUT --data "1" https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7}-migration
@@ -266,11 +268,11 @@ jobs:
             apk add --update tar gzip nodejs npm openssh-client bash 
             pip install awscli
       - attach_workspace:
-          at: /home/circleci/project/
+          at: ~/
       - run:
           name: Get api_url
           command: |
-            API_URL=$(cat /home/circleci/project/api_url.txt )
+            API_URL=$(cat ~/api_url.txt )
             echo "API_URL=$API_URL" >> frontend/.env
             echo $API_URL
       - run:
@@ -295,7 +297,7 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["71:3c:62:1f:3c:5b:e7:da:d5:cd:e1:fe:33:d3:6f:0b"]
       - attach_workspace:
-          at: /home/circleci/project/
+          at: ~/
       - run:
           name: Install dependencies
           command: |
@@ -304,7 +306,7 @@ jobs:
       - run:
           name: Deploy backend
           command: |
-            back_ip=$(cat /home/circleci/project/backend_ip.txt)
+            back_ip=$(cat ~/backend_ip.txt)
             echo $back_ip >> .circleci/ansible/inventory.txt
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
       - revert-migrations
@@ -322,11 +324,11 @@ jobs:
             pip3 install --upgrade pip \
             && pip3 install awscli
       - attach_workspace:
-          at: .
+          at: ~/
       - run:
           name: Get backend url
           command: |
-            export backend_url= $(cat api_url.txt)
+            export backend_url= $(cat ~/api_url.txt)
       - run:
           name: Backend smoke test.
           command: |

@@ -7,7 +7,7 @@
 
 - name: Copy backend files
   template:
-    src: /home/circleci/project/backend/
+    src: /tmp/backend.tar.gz
     dest: ~/backend/
 
 # command: /usr/local/bin/pm2 start npm --name backend -- start
@@ -15,7 +15,9 @@
 - name: Executing node
   shell: |
     ls -al
-    cd ~/backend/dist
+    cd ~/backend
+    tar xvzf backend.tar.gz
+    cd dist
     npm install
     npm run build 
     npm audit fix --audit-level=critical --force
