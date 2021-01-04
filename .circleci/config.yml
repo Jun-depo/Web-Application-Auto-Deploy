@@ -217,14 +217,13 @@ jobs:
             mkdir tmp
             cd backend 
             npm i -f
-            npm i tar
             npm run build
             npm audit fix
             npm run migrations
             echo "migration has been executed successfully" > /tmp/migration.txt
             pwd
             ls dist
-            tar backend.tar.gz .
+            tar -zcvf /tmp/backend.tar.gz ./
       - persist_to_workspace:
           root: /tmp/
           paths:
