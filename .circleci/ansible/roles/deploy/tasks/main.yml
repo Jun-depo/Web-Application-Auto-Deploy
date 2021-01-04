@@ -2,8 +2,8 @@
 ---
 - name: Copy backend files
   template:
-    src: backend/dist
-    dest: ~/backend
+    src: /home/circleci/project/backend
+    dest: /home/ubuntu/backend
 
 # command: /usr/local/bin/pm2 start npm --name backend -- start
 
