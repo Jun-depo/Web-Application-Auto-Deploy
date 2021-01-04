@@ -271,7 +271,7 @@ jobs:
           name: rebuild build frontend
           command: |
             cd frontend
-            npm install
+            npm i -f
             npm audit fix --audit-level=critical --force
             npm run build
       - run:
