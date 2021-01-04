@@ -157,9 +157,7 @@ jobs:
             aws ec2 describe-instances  \
               --filters Name=instance-state-name,Values=running \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text > .circleci/ansible/tmp.txt
-            BACKEND_IP=$(cat .circleci/ansible/tmp.txt | tail -1)
-            echo "${BACKEND_IP}.us-west-2.compute.amazonaws.com" >> .circleci/ansible/inventory.txt
+              --output text > .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: .
@@ -193,7 +191,7 @@ jobs:
           command: |
             BACKEND_IP=$(cat .circleci/ansible/inventory.txt | tail -1)
             echo $BACKEND_IP
-            export API_URL="http://${BACKEND_IP}:3030"
+            export API_URL="http://${BACKEND_IP}.us-west-2.compute.amazonaws.com:3030"
             echo $API_URL
             echo $API_URL > api_url.txt
       - persist_to_workspace:
@@ -270,7 +268,7 @@ jobs:
       - run:
           name: "copy website files to new version S3 bucket"
           command: |
-            aws s3 sync .dist/ s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --delete
+            aws s3 sync /root/project/backend/dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --delete
       - destroy-environment
 
   deploy-backend:
