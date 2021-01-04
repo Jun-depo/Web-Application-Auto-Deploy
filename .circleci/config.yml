@@ -295,12 +295,13 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible tar gzip nodejs npm
+            apk add --update ansible tar gzip nodejs npm curl bash
             pip install awscli
       - run:
           name: Deploy backend
           command: |
-            echo $(cat ~/backend_ip.txt) >> .circleci/ansible/inventory.txt
+            back_ip=$(cat ~/backend_ip.txt)
+            echo $back_ip >> .circleci/ansible/inventory.txt
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
       - revert-migrations
       - destroy-environment
