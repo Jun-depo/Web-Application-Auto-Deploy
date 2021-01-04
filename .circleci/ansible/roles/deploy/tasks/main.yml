@@ -7,7 +7,7 @@
 
 - name: Copy backend files
   template:
-    src: ~/backend/dist/
+    src: ~/project/backend/dist/
     dest: ~/backend/
 
 # command: /usr/local/bin/pm2 start npm --name backend -- start
