@@ -217,11 +217,12 @@ jobs:
             npm run migrations
             echo "migration has been executed successfully" > ~/migration.txt
             pwd
-            ls
+            ls dist
       - persist_to_workspace:
           root: ~/
           paths:
             - migration.txt
+            - backend/dist
       - attach_workspace:
           at: ~/
       - run:
@@ -289,7 +290,7 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["71:3c:62:1f:3c:5b:e7:da:d5:cd:e1:fe:33:d3:6f:0b"]
       - attach_workspace:
-          at: .
+          at: ~/
       - run:
           name: Install dependencies
           command: |

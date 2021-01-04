@@ -1,9 +1,14 @@
 ## Deployment playbook goes here.
 ---
+- name: Creates directory
+  file:
+    path: ~/backend
+    state: directory
+
 - name: Copy backend files
   template:
-    src: /home/circleci/project/backend
-    dest: /home/ubuntu/backend
+    src: ~/backend/dist/
+    dest: ~/backend/
 
 # command: /usr/local/bin/pm2 start npm --name backend -- start
 
