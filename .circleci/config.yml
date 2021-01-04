@@ -300,6 +300,7 @@ jobs:
           command: |
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
       - revert-migrations
+      - destroy-environment
 
   smoke-test:
     docker:
