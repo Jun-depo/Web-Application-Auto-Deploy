@@ -28,7 +28,7 @@ commands:
             echo $RESULT
             if(( $RESULT==1)); 
             then
-              cd ~/project/backend
+              cd backend
               npm install
               npm audit fix
               npm run migrations:revert
@@ -50,8 +50,6 @@ jobs:
             npm install
             npm run build
             ls -al
-            cd dist
-            ls -al
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -71,10 +69,10 @@ jobs:
             npm run build
             ls -al
             cd dist
-            ls -al
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
+      -
 
   test-frontend:
     docker:
@@ -196,12 +194,12 @@ jobs:
           name: Get backend URL
           command: |
             BACKEND_IP=$(cat .circleci/ansible/inventory.txt | tail -1)
-            echo $BACKEND_IP > ~/backend_ip.txt
+            echo $BACKEND_IP > /home/circleci/project/backend_ip.txt
             export API_URL="http://${BACKEND_IP}:3030"
             echo $API_URL
-            echo $API_URL > ~/api_url.txt
+            echo $API_URL > /home/circleci/project/api_url.txt
       - persist_to_workspace:
-          root: ~/
+          root: /home/circleci/project/
           paths:
             - api_url.txt
             - backend_ip.txt
@@ -222,20 +220,21 @@ jobs:
             npm run build
             npm audit fix
             npm run migrations
-            echo "migration has been executed successfully" > ~/migration.txt
+            echo "migration has been executed successfully" > /home/circleci/project/migration.txt
             pwd
             ls dist
       - persist_to_workspace:
-          root: ~/
+          root: /home/circleci/project/
           paths:
             - migration.txt
-            - backend/dist
+            - backend
       - attach_workspace:
-          at: ~/
+          at: /home/circleci/project/
       - run:
           name: Send migration results to memstash
           command: |
-            if grep "has been executed successfully" ~/migration.txt
+            if grep "has been executed successfully" /home/circleci/project/migration.txt
+            echo "found executed successfully in migration.txt" 
             then
               curl -H "Content-Type: text/plain" -H "token: c4893bca-128d-471f-b395-90d096b5f429" --request PUT --data "1" https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7}-migration
               echo "good migration"
@@ -250,7 +249,7 @@ jobs:
             echo $RESULT
             if(( $RESULT==0)); 
             then
-              cd ~/project/backend
+              cd backend
               npm install
               npm audit fix
               npm run migrations:revert
@@ -268,11 +267,11 @@ jobs:
             apk add --update tar gzip nodejs npm openssh-client bash 
             pip install awscli
       - attach_workspace:
-          at: ~/
+          at: /home/circleci/project/
       - run:
           name: Get api_url
           command: |
-            API_URL=$(cat ~/api_url.txt )
+            API_URL=$(cat /home/circleci/project/api_url.txt )
             echo "API_URL=$API_URL" >> frontend/.env
             echo $API_URL
       - run:
@@ -297,7 +296,7 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["71:3c:62:1f:3c:5b:e7:da:d5:cd:e1:fe:33:d3:6f:0b"]
       - attach_workspace:
-          at: ~/
+          at: /home/circleci/project/
       - run:
           name: Install dependencies
           command: |
@@ -306,7 +305,7 @@ jobs:
       - run:
           name: Deploy backend
           command: |
-            back_ip=$(cat ~/backend_ip.txt)
+            back_ip=$(cat /home/circleci/project/backend_ip.txt)
             echo $back_ip >> .circleci/ansible/inventory.txt
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
       - revert-migrations
@@ -410,30 +409,30 @@ workflows:
     jobs:
       - build-frontend
       - build-backend
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      # - deploy-infrastructure:
-      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     filters:
-      #       branches:
-      #         only: [test-feature-branch]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
-      # - deploy-frontend:
-      #     requires: [run-migrations]
-      # - deploy-backend:
-      #     requires: [run-migrations]
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
-      # - cloudfront-update:
-      #     requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [test-feature-branch]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+          requires: [smoke-test]
+      - cleanup:
+          requires: [cloudfront-update]
