@@ -7,7 +7,7 @@
 
 - name: Copy backend files
   template:
-    src: /tmp/backend.tar.gz
+    src: /tmp/workspace/backend.tar.gz
     dest: ~/backend/
 
 # command: /usr/local/bin/pm2 start npm --name backend -- start
@@ -18,7 +18,6 @@
     ls -al
     cd ~/backend
     tar xvzf backend.tar.gz
-    cd dist
     npm install
     npm run build 
     npm audit fix --audit-level=critical --force
