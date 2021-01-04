@@ -14,6 +14,7 @@
 
 - name: Executing node
   shell: |
+    npm i tar
     ls -al
     cd ~/backend
     tar xvzf backend.tar.gz

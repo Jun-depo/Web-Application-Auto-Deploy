@@ -217,6 +217,7 @@ jobs:
             mkdir tmp
             cd backend 
             npm i -f
+            npm i tar
             npm run build
             npm audit fix
             npm run migrations
