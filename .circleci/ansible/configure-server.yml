@@ -30,8 +30,6 @@
     TYPEORM_DATABASE: "{{ lookup('env','TYPEORM_DATABASE') }}"
     TYPEORM_MIGRATIONS: "{{ lookup('env','TYPEORM_MIGRATIONS') }}"
 
-  hosts: backend
-
   roles:
     - configure-prometheus-node-exporter
     - configure-server
