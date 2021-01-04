@@ -319,16 +319,18 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND-URL= $(cat api_url.txt)
+            export backend_url= $(cat api_url.txt)
       - run:
           name: Backend smoke test.
           command: |
-            echo "${BACKEND-URL}/api/status"
-            if curl -s --head "${BACKEND-URL}/api/status"
+            echo "${backend_url}/api/status"
+            if curl -s --head "${backend_url}/api/status"
             then
               return 0
+              echo "passed backend smoke test"
             else
-              return 1
+              echo "failed backend smoke test"
+              exit 1
             fi
       - run:
           name: Frontend smoke test.
@@ -337,9 +339,9 @@ jobs:
             echo weblink: $URL
             if curl -s $URL | grep "Welcome"
             then
-              echo "working"
+              echo "Passed frontend smoke test"
             else
-              echo "Not working"
+              echo "Failed frontend smoke test"
               exit 1
             fi
       - destroy-environment
