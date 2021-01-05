@@ -204,6 +204,10 @@ jobs:
           paths:
             - api_url.txt
             - backend_ip.txt
+      - persist_to_workspace:
+          root: .
+          paths:
+            - backend/.env
       - destroy-environment
 
   run-migrations:
