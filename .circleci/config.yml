@@ -196,8 +196,9 @@ jobs:
             echo $BACKEND_IP > ~/backend_ip.txt
             export API_URL="http://${BACKEND_IP}:3030"
             echo $API_URL
-            echo $API_URL > backend/api_url.txt
+            echo $API_URL > ~/api_url.txt
             echo "API_URL=${API_URL}" > backend/.env
+            cat backend/.env
       - persist_to_workspace:
           root: ~/
           paths:
@@ -273,7 +274,7 @@ jobs:
           name: Get api_url
           command: |
             API_URL=$(cat ~/api_url.txt )
-            echo "API_URL=$API_URL" >> frontend/.env
+            echo "API_URL=${API_URL}" >> frontend/.env
             echo $API_URL
       - run:
           name: rebuild build frontend
