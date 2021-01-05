@@ -16,12 +16,11 @@
   shell: |
     ls backend
     cd ~/backend/dist
-    npm install
     npm run build 
     npm audit fix --audit-level=critical --force
     pm2 start npm --name backend -- start
   environment:
-    ENVIRONMENT: production
+    NODE_ENV: production
     TYPEORM_CONNECTION: "{{ lookup('env','TYPEORM_CONNECTION') }}"
     TYPEORM_ENTITIES: "{{ lookup('env','TYPEORM_ENTITIESN') }}"
     TYPEORM_HOST: "{{ lookup('env','TYPEORM_HOST') }}"
