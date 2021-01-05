@@ -198,7 +198,7 @@ jobs:
             echo $API_URL
             echo $API_URL > ~/api_url.txt
             echo "API_URL=${API_URL}" > ~/.env
-            cat backend/.env
+            cat ~/.env
       - persist_to_workspace:
           root: ~/
           paths:
