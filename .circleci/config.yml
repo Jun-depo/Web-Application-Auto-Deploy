@@ -196,7 +196,8 @@ jobs:
             echo $BACKEND_IP > ~/backend_ip.txt
             export API_URL="http://${BACKEND_IP}:3030"
             echo $API_URL
-            echo $API_URL > ~/api_url.txt
+            echo $API_URL > backend/api_url.txt
+            echo "API_URL=${API_URL}" > backend/.env
       - persist_to_workspace:
           root: ~/
           paths:
@@ -312,8 +313,8 @@ jobs:
               --output text >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
-      - revert-migrations
-      - destroy-environment
+      # - revert-migrations
+      # - destroy-environment
 
   smoke-test:
     docker:
@@ -353,8 +354,8 @@ jobs:
               echo "Failed frontend smoke test"
               exit 1
             fi
-      - destroy-environment
-      - revert-migrations
+      # - destroy-environment
+      # - revert-migrations
 
   cloudfront-update:
     docker:
