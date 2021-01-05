@@ -1,5 +1,5 @@
 ---
-- name: "configuration play."
+- name: "Deploy play."
   hosts: web
   user: ubuntu
   gather_facts: false
