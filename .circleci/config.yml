@@ -221,7 +221,7 @@ jobs:
             npm audit fix
             npm run migrations
             echo "migration has been executed successfully" > /tmp/workspace/migration.txt
-            tar -zcvf /tmp/workspace/backend.tar.gz ./backend/
+            tar -zcvf /tmp/workspace/backend.tar.gz .
             ls /tmp/workspace/
       - persist_to_workspace:
           root: /tmp/workspace
