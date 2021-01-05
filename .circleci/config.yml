@@ -29,7 +29,6 @@ commands:
             if(( $RESULT==1)); 
             then
               cd backend
-              npm i fsevents
               npm install
               npm audit fix --audit-level=critical
               npm run migrations:revert
@@ -39,7 +38,7 @@ commands:
 jobs:
   build-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: circleci/node:12.16.0
     steps:
       - checkout
       - restore_cache:
@@ -57,7 +56,7 @@ jobs:
 
   build-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: circleci/node:12.16.0
     steps:
       - checkout
       - restore_cache:
@@ -76,7 +75,7 @@ jobs:
 
   test-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: circleci/node:12.16.0
     steps:
       - checkout
       - restore_cache:
@@ -90,7 +89,7 @@ jobs:
 
   test-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: circleci/node:12.16.0
     steps:
       - checkout
       - restore_cache:
@@ -104,7 +103,7 @@ jobs:
 
   scan-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: circleci/node:12.16.0
     steps:
       - checkout
       - restore_cache:
@@ -117,7 +116,7 @@ jobs:
 
   scan-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: circleci/node:12.16.0
     steps:
       - checkout
       - restore_cache:
@@ -210,7 +209,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: circleci/node:13.8.0
+      - image: circleci/node:12.16.0
     steps:
       - checkout
       - add_ssh_keys:
@@ -223,7 +222,6 @@ jobs:
             mkdir /tmp/workspace
             cd backend
             cp ~/.env .
-            npm i fsevents
             npm run build
             npm audit fix --audit-level=critical
             npm run migrations
@@ -257,7 +255,6 @@ jobs:
             if(( $RESULT==0)); 
             then
               cd backend
-              npm i fsevents
               npm install
               npm audit fix --audit-level=critical
               npm run migrations:revert
@@ -287,7 +284,6 @@ jobs:
           command: |
             npm install webpack-dev-server -g
             cd frontend
-            npm i fsevents
             npm audit fix --audit-level=critical
             npm run build
       - run:
