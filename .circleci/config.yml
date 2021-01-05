@@ -331,12 +331,12 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export backend_url= $(cat ~/api_url.txt)
+            export BACKEND_URL= $(cat ~/api_url.txt)
       - run:
           name: Backend smoke test.
           command: |
-            echo "${backend_url}/api/status"
-            if curl -s --head "${backend_url}/api/status"
+            echo "${BACKEND_URL}/api/status"
+            if curl -s --head "${BACKEND_URL}/api/status"
             then
               return 0
               echo "passed backend smoke test"
