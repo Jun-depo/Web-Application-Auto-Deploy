@@ -331,7 +331,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND_URL= $(cat ~/api_url.txt)
+            export BACKEND_URL=$(cat ~/api_url.txt)
       - run:
           name: Backend smoke test.
           command: |
