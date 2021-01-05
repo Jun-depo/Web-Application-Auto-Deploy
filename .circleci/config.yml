@@ -329,12 +329,9 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
-          name: Get backend url
+          name: Backend smoke test
           command: |
-            export BACKEND_URL=$(cat ~/api_url.txt)
-      - run:
-          name: Backend smoke test.
-          command: |
+            BACKEND_URL=$(cat ~/api_url.txt)
             echo "${BACKEND_URL}/api/status"
             if curl -s --head "${BACKEND_URL}/api/status"
             then
