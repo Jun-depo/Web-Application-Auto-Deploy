@@ -197,17 +197,14 @@ jobs:
             export API_URL="http://${BACKEND_IP}:3030"
             echo $API_URL
             echo $API_URL > ~/api_url.txt
-            echo "API_URL=${API_URL}" > backend/.env
+            echo "API_URL=${API_URL}" > ~/.env
             cat backend/.env
       - persist_to_workspace:
           root: ~/
           paths:
             - api_url.txt
             - backend_ip.txt
-      - persist_to_workspace:
-          root: .
-          paths:
-            - backend/.env
+            - .env
       - destroy-environment
 
   run-migrations:
@@ -217,11 +214,14 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["71:3c:62:1f:3c:5b:e7:da:d5:cd:e1:fe:33:d3:6f:0b"]
+      - attach_workspace:
+          at: ~/
       - run:
           name: Run migrations
           command: |
             mkdir /tmp/workspace
-            cd backend 
+            cd backend
+            cp ~/.env .
             npm i -f
             npm run build
             npm audit fix
