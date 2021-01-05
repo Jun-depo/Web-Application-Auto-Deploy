@@ -272,14 +272,6 @@ jobs:
           command: |
             apk add --update tar gzip nodejs npm openssh-client bash 
             pip install awscli
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Get api_url
-          command: |
-            API_URL=$(cat ~/api_url.txt )
-            echo "API_URL=${API_URL}" >> frontend/.env
-            echo $API_URL
       - run:
           name: rebuild build frontend
           command: |
