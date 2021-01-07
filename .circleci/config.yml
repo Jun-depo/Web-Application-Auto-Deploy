@@ -223,7 +223,7 @@ jobs:
             npm i jest 
             npm run build
             npm run migrations > ~/migration.txt
-            tar -zcvf ~/backend.tar.gz ./dist
+            tar -zcvf ~/backend.tar.gz .
             ls
       - persist_to_workspace:
           root: ~/
