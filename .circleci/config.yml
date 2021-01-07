@@ -37,7 +37,7 @@ commands:
 jobs:
   build-frontend:
     docker:
-      - image: circleci/node:12.16.0
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -47,7 +47,6 @@ jobs:
           command: |
             cd frontend
             npm install
-            npm i oauth-sign
             npm run build
             ls -al
       - save_cache:
@@ -56,7 +55,7 @@ jobs:
 
   build-backend:
     docker:
-      - image: circleci/node:12.16.0
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -67,16 +66,14 @@ jobs:
             cd backend
             npm install
             npm run build
-            npm install jest
             ls -al
-            cd dist
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
 
   test-frontend:
     docker:
-      - image: circleci/node:12.16.0
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -85,11 +82,15 @@ jobs:
           name: Test frontend-build
           command: |
             cd frontend
+            npm i oauth-sign
             npm run test
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: frontend-build
 
   test-backend:
     docker:
-      - image: circleci/node:12.16.0
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -97,12 +98,16 @@ jobs:
       - run:
           name: Test backend-build
           command: |
-            cd backend       
+            cd backend 
+            npm i jest      
             npm run test
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-build
 
   scan-frontend:
     docker:
-      - image: circleci/node:12.16.0
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -112,10 +117,13 @@ jobs:
           command: |
             cd frontend
             npm audit fix --audit-level=critical
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: frontend-build
 
   scan-backend:
     docker:
-      - image: circleci/node:12.16.0
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -125,6 +133,9 @@ jobs:
           command: |
             cd backend
             npm audit fix --audit-level=critical
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-build
 
   deploy-infrastructure:
     docker:
@@ -193,11 +204,13 @@ jobs:
 
   run-migrations:
     docker:
-      - image: circleci/node:12.16.0
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints: ["71:3c:62:1f:3c:5b:e7:da:d5:cd:e1:fe:33:d3:6f:0b"]
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Add Environment variables to .env file
           command: |
@@ -219,10 +232,6 @@ jobs:
           name: Run migrations
           command: |
             cd backend
-            npm i
-            npm run build
-            npm install jest
-            npm audit fix --audit-level=critical
             npm run migrations > /tmp/workspace/migration.txt
             tail -5 ~/migration.txt
             tar -zcvf /tmp/workspace/backend.tar.gz .
@@ -236,8 +245,7 @@ jobs:
       - run:
           name: Send migration results to memstash
           command: |
-            if grep "has been executed successfully" ~/migration.txt
-            echo "migration ... has been executed successfully in migration.txt" 
+            if grep "has been executed successfully\|No migrations are pending" ~/migration.txt
             then
               curl -H "Content-Type: text/plain" -H "token: c4893bca-128d-471f-b395-90d096b5f429" --request PUT --data "1" https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7}-migration
               echo "good migration"
@@ -249,12 +257,12 @@ jobs:
           name: Revert failed migration
           command: |
             export RESULT=$(curl -H "token: c4893bca-128d-471f-b395-90d096b5f429" --request GET https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7}-migration)
-            echo $RESULT
             if(( $RESULT==0)); 
             then
               cd backend
               npm install
-              npm audit fix --audit-level=critical
+              npm install jest
+              npm audit fix
               npm run migrations:revert
               exit 1
             fi
@@ -269,6 +277,8 @@ jobs:
           command: |
             apk add --update tar gzip nodejs npm openssh-client bash 
             pip install awscli
+      - restore_cache:
+          keys: [frontend-build]
       - attach_workspace:
           at: .
       - run:
@@ -290,7 +300,6 @@ jobs:
             cat frontend/.env
             npm install webpack-dev-server -g
             cd frontend
-            npm install
             npm audit fix --audit-level=critical
             npm run build
       - run:
