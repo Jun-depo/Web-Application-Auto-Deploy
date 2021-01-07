@@ -8,7 +8,7 @@
 - name: unarchive backend files
   become: yes
   unarchive:
-    src: /root/project/backend/dist/
+    src: /tmp/workspace/backend.tar.gz
     dest: /home/ubuntu/backend/
 
 - name: Executing node
@@ -16,4 +16,5 @@
   shell: |
     ls backend
     cd /home/ubuntu/backend/
+    npm audit fix --audit-level=critical --force
     pm2 start npm --name backend -- start
