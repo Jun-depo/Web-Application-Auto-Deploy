@@ -66,8 +66,8 @@ jobs:
           command: |
             cd backend
             npm install
-            npm install jest
             npm run build
+            npm install jest
             ls -al
             cd dist
       - save_cache:
@@ -221,6 +221,7 @@ jobs:
             cd backend
             npm i
             npm run build
+            npm install jest
             npm audit fix --audit-level=critical
             npm run migrations > /tmp/workspace/migration.txt
             tail -5 ~/migration.txt
