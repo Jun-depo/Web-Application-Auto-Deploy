@@ -227,10 +227,8 @@ jobs:
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
-            - migration.txt
             - backend.tar.gz
-      - attach_workspace:
-          at: /tmp/workspace
+            - migration.txt
       - run:
           name: Send migration results to memstash
           command: |
@@ -309,7 +307,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible tar gzip nodejs npm curl bash
+            apk add --update ansible tar gzip nodejs npm curl openssh-client bash
             pip install awscli
       - run:
           name: Deploy backend
