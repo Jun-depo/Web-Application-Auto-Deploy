@@ -231,6 +231,7 @@ jobs:
       - run:
           name: Run migrations
           command: |
+            mkdir /tmp/workspace
             cd backend
             npm run migrations > /tmp/workspace/migration.txt
             tail -5 ~/migration.txt
