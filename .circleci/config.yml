@@ -214,10 +214,6 @@ jobs:
             echo "TYPEORM_USERNAME=${TYPEORM_USERNAME}" >> backend/.env
             echo "TYPEORM_PASSWORD=${TYPEORM_PASSWORD}" >> backend/.env
             echo "TYPEORM_DATABASE=${TYPEORM_DATABASE}" >> backend/.env
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/backend/.env
       - run:
           name: Run migrations
           command: |
@@ -227,8 +223,7 @@ jobs:
             npm i jest 
             npm run build
             npm run migrations > /tmp/workspace/migration.txt
-            tail -5 /tmp/workspace/migration.txt
-            tar -zcvf /tmp/workspace/backend.tar.gz ~/project/backend/
+            tar -zcvf /tmp/workspace/backend.tar.gz ./dist
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
