@@ -219,9 +219,10 @@ jobs:
           name: Run migrations
           command: |
             cd backend
-            npm i
+            npm i      
             npm i jest 
             npm run build
+            npm audit fix
             npm run migrations > ~/migration.txt
             tar -zcvf ~/backend.tar.gz .
             ls
