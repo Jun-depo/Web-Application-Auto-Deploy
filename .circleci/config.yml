@@ -84,9 +84,6 @@ jobs:
             cd frontend
             npm i oauth-sign
             npm run test
-      - save_cache:
-          paths: [frontend/node_modules]
-          key: frontend-build
 
   test-backend:
     docker:
@@ -101,9 +98,6 @@ jobs:
             cd backend 
             npm i jest      
             npm run test
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-build
 
   scan-frontend:
     docker:
@@ -117,9 +111,6 @@ jobs:
           command: |
             cd frontend
             npm audit fix --audit-level=critical
-      - save_cache:
-          paths: [frontend/node_modules]
-          key: frontend-build
 
   scan-backend:
     docker:
@@ -133,9 +124,6 @@ jobs:
           command: |
             cd backend
             npm audit fix --audit-level=critical
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-build
 
   deploy-infrastructure:
     docker:
@@ -209,8 +197,6 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["71:3c:62:1f:3c:5b:e7:da:d5:cd:e1:fe:33:d3:6f:0b"]
-      - restore_cache:
-          keys: [backend-build]
       - run:
           name: Add Environment variables to .env file
           command: |
