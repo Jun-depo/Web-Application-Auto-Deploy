@@ -234,7 +234,7 @@ jobs:
             mkdir /tmp/workspace
             cd backend
             npm run migrations > /tmp/workspace/migration.txt
-            tail -5 ~/migration.txt
+            tail -5 /tmp/workspace/migration.txt
             tar -zcvf /tmp/workspace/backend.tar.gz .
       - persist_to_workspace:
           root: /tmp/workspace
