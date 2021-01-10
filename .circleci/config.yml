@@ -384,10 +384,9 @@ jobs:
 
             echo $OldWorkflowID
 
-            aws cloudformation deploy \
+            aws cloudformation create \
             --template-file .circleci/files/cloudfront.yml \
             --stack-name "udapeople-cloudfront-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --no-fail-on-empty-changeset \
             --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
             --tags project=udapeople
       - persist_to_workspace:
