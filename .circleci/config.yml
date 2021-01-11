@@ -49,9 +49,9 @@ jobs:
             then
               aws cloudformation describe-stacks --stack-name udapeople-cloudfront --query ["Stacks"][0]['Parameters'][0]['ParameterValue'] --output text > ~/OldWorkflowID.txt
             else
-              echo "No OldWorkflowID" >> OldWorkflowID.txt
+              echo "No OldWorkflowID" >> ~/OldWorkflowID.txt
             fi 
-            cat OldWorkflowID.txt 
+            cat ~/OldWorkflowID.txt 
       - persist_to_workspace:
           root: ~/
           paths:
