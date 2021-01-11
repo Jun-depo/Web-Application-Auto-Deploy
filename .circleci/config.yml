@@ -379,9 +379,7 @@ jobs:
 
             export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
               --stack-status=filter CREATE_COMPLETE --no-paginate --output text)
-
             echo $OldWorkflowID > ~/OldWorkID.txt
-
             echo $OldWorkflowID
 
             aws cloudformation deploy \
@@ -389,7 +387,11 @@ jobs:
             --stack-name "udapeople-cloudfront-${CIRCLE_WORKFLOW_ID:0:7}" \
             --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
             --tags project=udapeople \
-            --no-fail-on-empty-changeset \
+            if [ "$?" -eq 255 ]
+            then
+              echo "No changes to deploy."
+              true
+            fi
       - persist_to_workspace:
           root: ~/
           paths:
