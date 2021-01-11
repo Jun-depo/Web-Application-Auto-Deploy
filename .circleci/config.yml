@@ -383,22 +383,25 @@ jobs:
       
   cloudfront-update:
     docker:
-      - image: amazon/aws-cli
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - run:
           name: Installing dependencies
           command: |
-            yum -y install tar gzip
+            apk add --update curl tar gzip
+            pip3 install --upgrade pip \
+            && pip3 install awscli
       - run:
           name: Update cloudfront distribution
           command: |
             aws cloudformation deploy \
             --template-file .circleci/files/cloudfront.yml \
             --stack-name "udapeople-cloudfront-${CIRCLE_WORKFLOW_ID:0:7}" --no-fail-on-empty-changeset \
-            --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+            --parameter-overrides WorkflowID="a-${CIRCLE_WORKFLOW_ID:0:7}" \
             --tags project=udapeople \
       - destroy-environment
+      - revert-migrations
 
   cleanup:
     docker:
