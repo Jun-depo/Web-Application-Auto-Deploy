@@ -49,7 +49,7 @@ jobs:
             then
               aws cloudformation describe-stacks --stack-name udapeople-cloudfront --query ["Stacks"][0]['Parameters'][0]['ParameterValue'] --output text > ~/OldWorkflowID.txt
             else
-              echo "No OldWorkflowID" >> ~/OldWorkflowID.txt
+              echo "No OldWorkflowID" > ~/OldWorkflowID.txt
             fi 
             cat ~/OldWorkflowID.txt 
       - persist_to_workspace:
@@ -400,8 +400,8 @@ jobs:
           command: |
             aws cloudformation deploy \
             --template-file .circleci/files/cloudfront.yml \
-            --stack-name "udapeople-cloudfront-${CIRCLE_WORKFLOW_ID:0:7}" --no-fail-on-empty-changeset \
-            --parameter-overrides WorkflowID="a-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --stack-name udapeople-cloudfront --no-fail-on-empty-changeset \
+            --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
             --tags project=udapeople \
       - destroy-environment
       - revert-migrations
@@ -422,7 +422,7 @@ jobs:
           command: |
             OldWorkflowID=$(cat ~/OldWorkflowID.txt)
             echo $OldWorkflowID
-            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
+            if [$OldWorkflowID != "No OldWorkflowID" ] && [ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]
             then 
               aws s3 rm s3://udapeople-${OldWorkflowID} --recursive
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
@@ -433,32 +433,32 @@ workflows:
   default:
     jobs:
       - get_old_workflow_id
-      # - build-frontend
-      # - build-backend
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      # - deploy-infrastructure:
-      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     filters:
-      #       branches:
-      #         only: [test-feature-branch]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
-      # - deploy-frontend:
-      #     requires: [run-migrations]
-      # - deploy-backend:
-      #     requires: [run-migrations]
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
-      # - cloudfront-update:
-      #     requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [test-feature-branch]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+          requires: [smoke-test]
+      - cleanup:
+          requires: [cloudfront-update]
