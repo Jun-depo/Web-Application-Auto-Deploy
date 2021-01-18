@@ -44,13 +44,12 @@ jobs:
       - run: yum update -y && yum install tar gzip -y
       - run:
           name: "export old WorkflowID"
-          command: |
-            if aws cloudformation describe-stacks --region us-west-2 --stack-name udapeople-cloudfront 
+          command: |           
+            if (aws cloudformation describe-stacks --stack-name udapeople-cloudfront --query "Stacks[0].Parameters[?ParameterKey=='WorkflowID'].ParameterValue" --output text)
             then
-              export OldWorkflowID= $(aws cloudformation describe-stacks --stack-name udapeople-cloudfront --query "Stacks[0].Parameters[?ParameterKey=='WorkflowID'].ParameterValue" --output text)
-              echo $OldWorkflowI
-              echo $OldWorkflowI > ~/OldWorkflowID.txt 
-            else
+              export OldWorkflowID=$(aws cloudformation describe-stacks --stack-name udapeople-cloudfront --query "Stacks[0].Parameters[?ParameterKey=='WorkflowID'].ParameterValue" --output text)
+              echo $OldWorkflowID > ~/OldWorkflowID.txt
+            else 
               echo "No OldWorkflowID" > ~/OldWorkflowID.txt
             fi 
             cat ~/OldWorkflowID.txt 
@@ -435,32 +434,32 @@ workflows:
   default:
     jobs:
       - get_old_workflow_id
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          filters:
-            branches:
-              only: [test-feature-branch]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
-      - deploy-frontend:
-          requires: [run-migrations]
-      - deploy-backend:
-          requires: [run-migrations]
-      - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update:
-          requires: [smoke-test]
-      - cleanup:
-          requires: [cloudfront-update, get_old_workflow_id]
+      # - build-frontend
+      # - build-backend
+      # - test-frontend:
+      #     requires: [build-frontend]
+      # - test-backend:
+      #     requires: [build-backend]
+      # - scan-backend:
+      #     requires: [build-backend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
+      # - deploy-infrastructure:
+      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      #     filters:
+      #       branches:
+      #         only: [test-feature-branch]
+      # - configure-infrastructure:
+      #     requires: [deploy-infrastructure]
+      # - run-migrations:
+      #     requires: [configure-infrastructure]
+      # - deploy-frontend:
+      #     requires: [run-migrations]
+      # - deploy-backend:
+      #     requires: [run-migrations]
+      # - smoke-test:
+      #     requires: [deploy-backend, deploy-frontend]
+      # - cloudfront-update:
+      #     requires: [smoke-test]
+      # - cleanup:
+      #     requires: [cloudfront-update, get_old_workflow_id]
