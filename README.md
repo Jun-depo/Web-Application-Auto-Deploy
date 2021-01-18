@@ -27,26 +27,46 @@ For your submission, please submit the following:
      https://github.com/Jun-depo/Web-Application-Auto-Deploy
 
   1. Public URL for your S3 Bucket (aka, your green candidate front-end) [URL02]
-     arn:aws:s3:::udapeople-jun27ppxt437
+     arn:aws:s3:::udapeople-112b57d
+     
   1. Public URL for your CloudFront distribution (aka, your blue production front-end) [URL03]
+      d3mfp4bcgnuf4w.cloudfront.net
+      
   1. Public URLs to deployed application back-end in EC2 [URL04]
+  ec2-54-202-18-55.us-west-2.compute.amazonaws.com
+  
   1. Public URL to your Prometheus Server [URL05]
+  ec2-54-245-215-34.us-west-2.compute.amazonaws.com
 
 - Your screenshots in JPG or PNG format, named using the screenshot number listed in the instructions. These screenshots should be included in your code repository in the root folder.
 
   1. Job failed because of compile errors. [SCREENSHOT01]
+  <img src="images/SCREENSHOT01.png" />
   1. Job failed because of unit tests. [SCREENSHOT02]
+  <img src="images/SCREENSHOT02.png" />
   1. Job that failed because of vulnerable packages. [SCREENSHOT03]
+  <img src="images/SCREENSHOT03.png" />
   1. An alert from one of your failed builds. [SCREENSHOT04]
+  <img src="images/SCREENSHOT04.png" />
   1. Appropriate job failure for infrastructure creation. [SCREENSHOT05]
+  <img src="images/SCREENSHOT05.png" />
   1. Appropriate job failure for the smoke test job. [SCREENSHOT06]
+  <img src="images/SCREENSHOT06.png" />
   1. Successful rollback after a failed smoke test. [SCREENSHOT07]
+  <img src="images/SCREENSHOT07.png" />
   1. Successful promotion job. [SCREENSHOT08]
+  <img src="images/SCREENSHOT08.png" />
   1. Successful cleanup job. [SCREENSHOT09]
+  <img src="images/SCREENSHOT09.png" />
   1. Only deploy on pushed to `master` branch. [SCREENSHOT10]
+  <img src="images/SCREENSHOT10.png" />
   1. Provide a screenshot of a graph of your EC2 instance including available memory, available disk space, and CPU usage. [SCREENSHOT11]
+  <img src="images/SCREENSHOT11-a.png" />
+  <img src="images/SCREENSHOT11-b.png" />
+  <img src="images/SCREENSHOT11-c.png" />  
+  
   1. Provide a screenshot of an alert that was sent by Prometheus. [SCREENSHOT12]
-
+    <img src="images/SCREENSHOT12.png" />
 - Your presentation should be in PDF format named "presentation.pdf" and should be included in your code repository root folder.
 
 Before you submit your project, please check your work against the project rubric. If you haven’t satisfied each criterion in the rubric, then revise your work so that you have met all the requirements.
