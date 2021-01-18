@@ -47,9 +47,9 @@ jobs:
           command: |
             if aws cloudformation describe-stacks --region us-west-2 --stack-name udapeople-cloudfront 
             then
-              OldWorkflowID= $(aws cloudformation describe-stacks --stack-name udapeople-cloudfront --query "Stacks[0].Parameters[?ParameterKey=='WorkflowID'].ParameterValue" --output text)
-              echo $OldWorkflowI > ~/OldWorkflowID.txt
-              cat > ~/OldWorkflowID.txt 
+              export OldWorkflowID= $(aws cloudformation describe-stacks --stack-name udapeople-cloudfront --query "Stacks[0].Parameters[?ParameterKey=='WorkflowID'].ParameterValue" --output text)
+              echo $OldWorkflowI
+              echo $OldWorkflowI > ~/OldWorkflowID.txt 
             else
               echo "No OldWorkflowID" > ~/OldWorkflowID.txt
             fi 
