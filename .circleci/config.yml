@@ -429,35 +429,7 @@ jobs:
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
             fi
-
-  build-node-exporter:
-    docker:
-      - image: python:3.7-alpine3.11
-    steps:
-      - checkout
-      - add_ssh_keys:
-          fingerprints: ["71:3c:62:1f:3c:5b:e7:da:d5:cd:e1:fe:33:d3:6f:0b"]
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --update ansible openssl
-            apk add --no-cache python3 py3-pip \
-              && pip3 install --upgrade pip \
-              && pip3 install awscli \
-              && rm -rf /var/cache/apk/*
-      - run:
-          name: Configure server
-          command: |
-            cat .circleci/ansible/inventory.txt
-            cd .circleci/ansible/
-            ansible-playbook -i inventory.txt configure-server.yml
-      - destroy-environment
-
-         
-
-
+        
 workflows:
   default:
     jobs:
