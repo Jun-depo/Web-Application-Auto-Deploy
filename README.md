@@ -27,16 +27,12 @@ For your submission, please submit the following:
      https://github.com/Jun-depo/Web-Application-Auto-Deploy
 
   1. Public URL for your S3 Bucket (aka, your green candidate front-end) [URL02]
-     arn:aws:s3:::udapeople-112b57d
      
   1. Public URL for your CloudFront distribution (aka, your blue production front-end) [URL03]
-      d3mfp4bcgnuf4w.cloudfront.net
       
   1. Public URLs to deployed application back-end in EC2 [URL04]
-  ec2-54-202-18-55.us-west-2.compute.amazonaws.com
   
   1. Public URL to your Prometheus Server [URL05]
-  ec2-54-245-215-34.us-west-2.compute.amazonaws.com
 
 - Your screenshots in JPG or PNG format, named using the screenshot number listed in the instructions. These screenshots should be included in your code repository in the root folder.
 
