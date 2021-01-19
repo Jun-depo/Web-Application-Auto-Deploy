@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1611045627221" clover="3.2.0">
-  <project timestamp="1611045627221" name="All files">
-    <metrics statements="1092" coveredstatements="754" conditionals="79" coveredconditionals="32" methods="217" coveredmethods="148" elements="1388" coveredelements="934" complexity="0" loc="1092" ncloc="1092" packages="39" files="115" classes="115"/>
+<coverage generated="1611053488597" clover="3.2.0">
+  <project timestamp="1611053488597" name="All files">
+    <metrics statements="1092" coveredstatements="758" conditionals="79" coveredconditionals="32" methods="217" coveredmethods="150" elements="1388" coveredelements="940" complexity="0" loc="1092" ncloc="1092" packages="39" files="115" classes="115"/>
     <package name="common">
       <metrics statements="10" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
       <file name="common.module.ts" path="/home/jun/1_cloud_devops/project4/Web-Application-Auto-Deploy/backend/src/modules/common/common.module.ts">
@@ -1538,17 +1538,17 @@
       </file>
     </package>
     <package name="status">
-      <metrics statements="10" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+      <metrics statements="10" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
       <file name="status.controller.ts" path="/home/jun/1_cloud_devops/project4/Web-Application-Auto-Deploy/backend/src/modules/status/status.controller.ts">
-        <metrics statements="8" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <metrics statements="8" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
         <line num="5" count="1" type="stmt"/>
-        <line num="6" count="0" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
         <line num="9" count="1" type="stmt"/>
-        <line num="10" count="0" type="stmt"/>
-        <line num="11" count="0" type="stmt"/>
-        <line num="13" count="0" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
       </file>
       <file name="status.module.ts" path="/home/jun/1_cloud_devops/project4/Web-Application-Auto-Deploy/backend/src/modules/status/status.module.ts">
         <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
